@@ -1,1 +1,1 @@
-# 90SSS
+# 90 Seconds Stealing Simulator
