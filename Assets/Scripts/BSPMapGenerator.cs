@@ -17,11 +17,14 @@ public class RoomNode
 public class BSPMapGenerator : MonoBehaviour
 {
     public GameObject player;
+    public GameObject lootPrefab;
 
     public int mapWidth = 30;
     public int mapHeight = 20;
     public int minRoomSize = 5;
     public int maxRooms = 6;
+    public int minItemsPerRoom = 1;
+    public int maxItemsPerRoom = 4;
 
     public Tilemap floorTilemap;
     public Tilemap wallTilemap;
@@ -74,6 +77,7 @@ public class BSPMapGenerator : MonoBehaviour
         DrawMap();
         ConnectRooms(rootNode);
         SpawnPlayer(GenerateEntrance());
+        SpawnItems();
     }
 
     private void SpawnPlayer(Vector3Int spawnpoint)
@@ -215,7 +219,38 @@ public class BSPMapGenerator : MonoBehaviour
         wallTilemap.SetTile(doorPos, null);
         floorTilemap.SetTile(doorPos, entranceTile);
 
-        playerSpawnPoint = new Vector3Int(doorX, doorY + 2, 0);
+        playerSpawnPoint = new Vector3Int(doorX, doorY + 1, 0);
         return playerSpawnPoint;
+    }
+
+    private void SpawnItems()
+    {
+        if (lootPrefab == null) return;
+
+        foreach (RoomNode room in allRooms)
+        {
+            int itemsToSpawn = Random.Range(minItemsPerRoom, maxItemsPerRoom + 1);
+
+            for (int i = 0; i < itemsToSpawn; i++)
+            {
+                int randomX = Random.Range(room.Bounds.x + 1, room.Bounds.xMax - 1);
+                int randomY = Random.Range(room.Bounds.y + 1, room.Bounds.yMax - 1);
+
+                Vector3Int spawnPosInt = new Vector3Int(randomX, randomY, 0);
+
+                if (wallTilemap.GetTile(spawnPosInt) == null)
+                {
+                    Vector3 spawnPos = floorTilemap.GetCellCenterWorld(spawnPosInt);
+                    GameObject newItem = Instantiate(lootPrefab, spawnPos, Quaternion.identity);
+
+                    LootItem lootData = newItem.GetComponent<LootItem>();
+                    if (lootData != null)
+                    {
+                        lootData.weight = Random.Range(1, 6);
+                        lootData.value = Random.Range(10, 101);
+                    }
+                }
+            }
+        }
     }
 }
