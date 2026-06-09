@@ -4,6 +4,7 @@ using UnityEngine;
 [System.Serializable]
 public struct ItemData
 {
+    public string itemName;
     public int weight;
     public int value;
 }
@@ -16,15 +17,25 @@ public class Inventory : MonoBehaviour
 
     public List<ItemData> collectedItems = new List<ItemData>();
 
-    public bool AddItem(int weight, int value)
+    public bool AddItem(string itemName, int weight, int value)
     {
         if (currentWeight + weight <= maxWeight)
         {
-            collectedItems.Add(new ItemData { weight = weight, value = value });
+            collectedItems.Add(new ItemData { itemName = itemName, weight = weight, value = value });
             currentWeight += weight;
             totalValue += value;
             return true;
         }
         return false;
+    }
+
+    public void RemoveItem(ItemData item)
+    {
+        if (collectedItems.Contains(item))
+        {
+            collectedItems.Remove(item);
+            currentWeight -= item.weight;
+            totalValue -= item.value;
+        }
     }
 }

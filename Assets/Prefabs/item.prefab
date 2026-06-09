@@ -105,7 +105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b7fadb29fff9ca48920acc93933864c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  itemName: 
+  itemName: Item
   weight: 1
   value: 10
 --- !u!58 &4564647670265909193

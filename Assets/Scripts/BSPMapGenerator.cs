@@ -18,6 +18,7 @@ public class BSPMapGenerator : MonoBehaviour
 {
     public GameObject player;
     public GameObject lootPrefab;
+    public GameObject exitZonePrefab;
 
     public int mapWidth = 30;
     public int mapHeight = 20;
@@ -33,7 +34,7 @@ public class BSPMapGenerator : MonoBehaviour
     public TileBase entranceTile;
 
     public List<RoomNode> allRooms = new List<RoomNode>();
-    public Vector3Int playerSpawnPoint;
+    public Vector3 playerSpawnPoint;
 
     private RoomNode rootNode;
 
@@ -80,7 +81,7 @@ public class BSPMapGenerator : MonoBehaviour
         SpawnItems();
     }
 
-    private void SpawnPlayer(Vector3Int spawnpoint)
+    private void SpawnPlayer(Vector3 spawnpoint)
     {
         if (player != null)
         {
@@ -198,7 +199,7 @@ public class BSPMapGenerator : MonoBehaviour
         floorTilemap.SetTile(new Vector3Int(x, y, 0), floorTile);
     }
 
-    private Vector3Int GenerateEntrance()
+    private Vector3 GenerateEntrance()
     {
         RoomNode borderRoom = allRooms[0];
 
@@ -219,7 +220,13 @@ public class BSPMapGenerator : MonoBehaviour
         wallTilemap.SetTile(doorPos, null);
         floorTilemap.SetTile(doorPos, entranceTile);
 
-        playerSpawnPoint = new Vector3Int(doorX, doorY + 1, 0);
+        if (exitZonePrefab != null)
+        {
+            Vector3 exitPos = floorTilemap.GetCellCenterWorld(doorPos);
+            Instantiate(exitZonePrefab, exitPos, Quaternion.identity);
+        }
+
+        playerSpawnPoint = new Vector3((float)(doorX + 0.5), (float)(doorY + 1.5), 0);
         return playerSpawnPoint;
     }
 

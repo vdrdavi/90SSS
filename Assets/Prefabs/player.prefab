@@ -313,7 +313,7 @@ GameObject:
   - component: {fileID: -56879919507393894}
   m_Layer: 0
   m_Name: player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -616,3 +616,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6f89f90363110e44b77c9929fc87058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCollector
+  lootPrefab: {fileID: 9110773310427884407, guid: f3752178b338bcf498eca9d7d0af006d, type: 3}
