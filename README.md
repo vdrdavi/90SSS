@@ -14,3 +14,9 @@ O jogador assume o papel de um ladrao que precisa de invadir uma casa gerada pro
 - Problema do Caixeiro Viajante (TSP - Heuristica do Vizinho Mais Proximo): Controla o planeamento macro da Inteligencia Artificial. Le a posicao de todas as salas geradas e traca a ordem de visitacao mais curta para que o guarda patrulhe a casa toda e volte a origem.
 
 - Busca em Largura (BFS - Pathfinding em Grid): Controla a navegacao micro da Inteligencia Artificial. Calcula as rotas celula a celula no Tilemap, permitindo que o inimigo contorne paredes dinamicas e persiga o jogador sem ficar preso no cenario.
+
+## Como Rodar o Projeto
+
+- Baixe a release mais recente na pagina do GitHub
+- Extraia o arquivo .zip no seu computador
+- Entre na pasta 90SSS extraida e abra o arquivo 90SSS.exe
