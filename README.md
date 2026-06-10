@@ -19,4 +19,4 @@ O jogador assume o papel de um ladrao que precisa de invadir uma casa gerada pro
 
 - Baixe a release mais recente na pagina do GitHub
 - Extraia o arquivo .zip no seu computador
-- Entre na pasta 90SSS extraida e abra o arquivo 90SSS.exe
+- Entre na pasta extraida e abra o arquivo 90SSS.exe
