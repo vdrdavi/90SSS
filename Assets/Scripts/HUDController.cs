@@ -32,7 +32,7 @@ public class HUDController : MonoBehaviour
             {
                 playerInventory = player.GetComponent<Inventory>();
                 playerCollector = player.GetComponent<PlayerCollector>();
-                playerMovement = player.GetComponent("PlayerController") as MonoBehaviour;
+                playerMovement = player.GetComponent("PlayerMovement") as MonoBehaviour;
             }
             return;
         }
@@ -65,6 +65,9 @@ public class HUDController : MonoBehaviour
         {
             playerMovement.enabled = !isActive;
         }
+
+        Cursor.visible = isActive;
+        Cursor.lockState = isActive ? CursorLockMode.None : CursorLockMode.Locked;
 
         if (isActive)
         {

@@ -16,9 +16,11 @@ public class RoomNode
 
 public class BSPMapGenerator : MonoBehaviour
 {
+    public GameManager gameManager;
     public GameObject player;
     public GameObject lootPrefab;
     public GameObject exitZonePrefab;
+    public GameObject guardPrefab;
 
     public int mapWidth = 30;
     public int mapHeight = 20;
@@ -26,6 +28,7 @@ public class BSPMapGenerator : MonoBehaviour
     public int maxRooms = 6;
     public int minItemsPerRoom = 1;
     public int maxItemsPerRoom = 4;
+    public int numberOfGuards = 1;
 
     public Tilemap floorTilemap;
     public Tilemap wallTilemap;
@@ -35,6 +38,7 @@ public class BSPMapGenerator : MonoBehaviour
 
     public List<RoomNode> allRooms = new List<RoomNode>();
     public Vector3 playerSpawnPoint;
+    public RoomNode entranceRoom;
 
     private RoomNode rootNode;
 
@@ -79,6 +83,7 @@ public class BSPMapGenerator : MonoBehaviour
         ConnectRooms(rootNode);
         SpawnPlayer(GenerateEntrance());
         SpawnItems();
+        SpawnGuard();
     }
 
     private void SpawnPlayer(Vector3 spawnpoint)
@@ -163,15 +168,8 @@ public class BSPMapGenerator : MonoBehaviour
         ConnectRooms(node.Left);
         ConnectRooms(node.Right);
 
-        Vector2Int centerLeft = new Vector2Int(
-            (int)node.Left.Bounds.center.x,
-            (int)node.Left.Bounds.center.y
-        );
-
-        Vector2Int centerRight = new Vector2Int(
-            (int)node.Right.Bounds.center.x,
-            (int)node.Right.Bounds.center.y
-        );
+        Vector2Int centerLeft = new Vector2Int((int)node.Left.Bounds.center.x, (int)node.Left.Bounds.center.y);
+        Vector2Int centerRight = new Vector2Int((int)node.Right.Bounds.center.x, (int)node.Right.Bounds.center.y);
 
         CreateCorridor(centerLeft, centerRight);
     }
@@ -201,18 +199,18 @@ public class BSPMapGenerator : MonoBehaviour
 
     private Vector3 GenerateEntrance()
     {
-        RoomNode borderRoom = allRooms[0];
+        entranceRoom = allRooms[0];
 
         foreach (RoomNode room in allRooms)
         {
             if (room.Bounds.y == 0)
             {
-                borderRoom = room;
+                entranceRoom = room;
                 break;
             }
         }
 
-        int doorX = (int)borderRoom.Bounds.center.x;
+        int doorX = (int)entranceRoom.Bounds.center.x;
         int doorY = 0;
 
         Vector3Int doorPos = new Vector3Int(doorX, doorY, 0);
@@ -234,6 +232,16 @@ public class BSPMapGenerator : MonoBehaviour
     {
         if (lootPrefab == null) return;
 
+        if (gameManager == null)
+        {
+            gameManager = FindObjectOfType<GameManager>();
+        }
+
+        if (gameManager != null)
+        {
+            gameManager.allSpawnedItems.Clear();
+        }
+
         foreach (RoomNode room in allRooms)
         {
             int itemsToSpawn = Random.Range(minItemsPerRoom, maxItemsPerRoom + 1);
@@ -253,11 +261,51 @@ public class BSPMapGenerator : MonoBehaviour
                     LootItem lootData = newItem.GetComponent<LootItem>();
                     if (lootData != null)
                     {
+                        lootData.itemName = "Artefato " + Random.Range(100, 999).ToString();
                         lootData.weight = Random.Range(1, 6);
                         lootData.value = Random.Range(10, 101);
+
+                        if (gameManager != null)
+                        {
+                            gameManager.allSpawnedItems.Add(new ItemData
+                            {
+                                itemName = lootData.itemName,
+                                weight = lootData.weight,
+                                value = lootData.value
+                            });
+                        }
                     }
                 }
             }
+        }
+    }
+
+    private void SpawnGuard()
+    {
+        if (guardPrefab == null || numberOfGuards <= 0) return;
+
+        List<RoomNode> validRooms = new List<RoomNode>();
+        foreach (RoomNode room in allRooms)
+        {
+            if (room != entranceRoom)
+            {
+                validRooms.Add(room);
+            }
+        }
+
+        List<RoomNode> availableRooms = new List<RoomNode>(validRooms);
+
+        for (int i = 0; i < numberOfGuards; i++)
+        {
+            if (availableRooms.Count == 0) break;
+
+            int randomIndex = Random.Range(0, availableRooms.Count);
+            RoomNode spawnRoom = availableRooms[randomIndex];
+            availableRooms.RemoveAt(randomIndex);
+
+            Vector3Int spawnPosInt = new Vector3Int((int)spawnRoom.Bounds.center.x, (int)spawnRoom.Bounds.center.y, 0);
+            Vector3 spawnPos = floorTilemap.GetCellCenterWorld(spawnPosInt);
+            Instantiate(guardPrefab, spawnPos, Quaternion.identity);
         }
     }
 }
